@@ -3,7 +3,7 @@ import { toast } from 'react-toastify'
 import type { IImageOrder, IUser } from "../Types/basictype";
 import { useAuthStore } from "../store/userAuthStore"
 import { apiClient } from "./userAxiosInstance";
-const API_URI = process.env.API_URI
+const API_URI = "https://gallery-app-backend-0j9u.onrender.com/api/user"
 
 
 export const handleAxiosError = (error: unknown) => {
