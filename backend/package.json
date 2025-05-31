@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.ts",
-  "scripts": {
+   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.ts",
     "start": "node dist/app.js",
-    "build": "tsc"
+    "build": "tsc",
+    "postbuild": "ls -la dist"
   },
   "author": "",
   "license": "ISC",
