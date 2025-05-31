@@ -1,5 +1,5 @@
 import { STATUS_CODES } from "../../constants/statusCode";
-import IImageService from "../../service/IImageService";
+import IImageService from "../../service/IImageService"
 import IImageController from "../IImageControler";
 import { Request, Response } from "express";
 
