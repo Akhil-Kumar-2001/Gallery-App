@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useAuthStore } from "../store/userAuthStore";
 import { jwtDecode } from 'jwt-decode';
 
-const API_URI = process.env.API_URI
+const API_URI = "https://gallery-app-backend-0j9u.onrender.com/api/user"
 
 
 // Create axios instance
