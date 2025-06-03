@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { DndContext, closestCenter, useSensor, useSensors, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
@@ -18,16 +17,28 @@ interface IImage {
   uploadedAt: string;
 }
 
-const SortableImage = ({ 
-  image, 
-  // index, 
-  onEdit, 
-  onDelete 
-}: { 
-  image: IImage; 
-  index: number;
+interface SortableImageProps {
+  image: IImage;
   onEdit: (image: IImage) => void;
   onDelete: (image: IImage) => void;
+  className?: string;
+  imageClassName?: string;
+  dragHandleClassName?: string;
+  editButtonClassName?: string;
+  deleteButtonClassName?: string;
+  iconSize?: number;
+}
+
+const SortableImage: React.FC<SortableImageProps> = ({
+  image,
+  onEdit,
+  onDelete,
+  className = '',
+  imageClassName = 'w-full h-48 object-cover transition-all duration-200',
+  dragHandleClassName = 'absolute top-2 left-2 w-6 h-6 bg-gray-500 bg-opacity-70 rounded cursor-move z-10 flex items-center justify-center',
+  editButtonClassName = 'bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-all duration-200 transform hover:scale-110 z-20',
+  deleteButtonClassName = 'bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-all duration-200 transform hover:scale-110 z-20',
+  iconSize = 16,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image._id });
@@ -41,14 +52,12 @@ const SortableImage = ({
   const handleEdit = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Edit fiber for:', image.title);
     onEdit(image);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Delete clicked for:', image.title);
     onDelete(image);
   };
 
@@ -61,50 +70,42 @@ const SortableImage = ({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white rounded-lg shadow-md overflow-hidden transform transition-all hover:scale-105 relative"
+      className={`bg-white rounded-lg shadow-md overflow-hidden transform transition-all hover:scale-105 relative ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div 
-        {...dragHandleProps}
-        className="absolute top-2 left-2 w-6 h-6 bg-gray-500 bg-opacity-70 rounded cursor-move z-10 flex items-center justify-center"
-        title="Drag to reorder"
-      >
-        <FaGripVertical className="w-4 h-4 text-white" />
+      <div {...dragHandleProps} className={dragHandleClassName} title="Drag to reorder">
+        <FaGripVertical className="text-white" size={iconSize} />
       </div>
 
       <div className="relative">
-        <img 
-          src={image.imagePath} 
-          alt={image.title} 
-          className="w-full h-48 object-cover transition-all duration-200"
-        />
+        <img src={image.imagePath} alt={image.title} className={imageClassName} />
         
         {isHovered && (
           <div className="absolute inset-0 flex items-center justify-center gap-4 transition-all duration-200">
             <img 
               src={image.imagePath} 
               alt={image.title} 
-              className="absolute inset-0 w-full h-full object-cover brightness-75"
+              className={`${imageClassName} absolute inset-0 brightness-75`} 
               style={{ filter: 'blur(2px)' }}
             />
             <button
               onClick={handleEdit}
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
-              className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-all duration-200 transform hover:scale-110 z-20"
+              className={editButtonClassName}
               title="Edit Image"
             >
-              <FaEdit size={16} />
+              <FaEdit size={iconSize} />
             </button>
             <button
               onClick={handleDelete}
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
-              className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-all duration-200 transform hover:scale-110 z-20"
+              className={deleteButtonClassName}
               title="Delete Image"
             >
-              <FaTrash size={16} />
+              <FaTrash size={iconSize} />
             </button>
           </div>
         )}
@@ -189,7 +190,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleImageUpload = (newImage: IImage) => {
-    setImages((prev) => [...prev, newImage]); // Append new image to the end
+    setImages((prev) => [...prev, newImage]);
   };
 
   const handleEditImage = (image: IImage) => {
@@ -274,11 +275,10 @@ const HomePage: React.FC = () => {
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={images.map((image) => image._id)} strategy={horizontalListSortingStrategy}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {images.map((image, index) => (
+                  {images.map((image) => (
                     <SortableImage 
                       key={image._id} 
-                      image={image} 
-                      index={index}
+                      image={image}
                       onEdit={handleEditImage}
                       onDelete={handleDeleteImage}
                     />
