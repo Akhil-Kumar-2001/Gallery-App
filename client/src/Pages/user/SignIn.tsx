@@ -22,7 +22,8 @@ const Login: React.FC = () => {
     password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Added loading state
+  const navigate = useNavigate();
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -47,11 +48,12 @@ const Login: React.FC = () => {
     e.preventDefault();
     
     if (validateForm()) {
+      setIsLoading(true); // Set loading to true when starting the API call
       try {
         const response = await SignIn({
-            email:formData.email,
-            password:formData.password
-        })
+          email: formData.email,
+          password: formData.password
+        });
         
         if (response.success) {
           toast.success('Login successful!');
@@ -59,15 +61,15 @@ const Login: React.FC = () => {
             email: '',
             password: ''
           });
-
-          navigate('/')
-
+          navigate('/');
         } else {
           const errorData: { message?: string } = await response.json();
           setErrors({ api: errorData.message || 'Login failed' });
         }
       } catch (error) {
         setErrors({ api: 'An error occurred. Please try again.' });
+      } finally {
+        setIsLoading(false); // Reset loading state after response
       }
     }
   };
@@ -109,6 +111,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                 placeholder="Enter your email"
+                disabled={isLoading} // Disable input during loading
               />
             </div>
             {errors.email && (
@@ -135,6 +138,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                 placeholder="Enter your password"
+                disabled={isLoading} // Disable input during loading
               />
             </div>
             {errors.password && (
@@ -146,20 +150,32 @@ const Login: React.FC = () => {
               </p>
             )}
             <p className="mt-2 text-right text-sm text-gray-600">
-              <button onClick={()=>navigate('/forgot-password')} className="text-blue-500 hover:text-blue-600 font-medium hover:underline">Forgot Password?</button>
+              <button onClick={() => navigate('/forgot-password')} className="text-blue-500 hover:text-blue-600 font-medium hover:underline" disabled={isLoading}>
+                Forgot Password?
+              </button>
             </p>
           </div>
           
           <button
             onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+            disabled={isLoading} // Disable button during loading
           >
-            Log In
+            {isLoading ? (
+              <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8 8 8 0 01-8-8z" />
+              </svg>
+            ) : null}
+            {isLoading ? 'Logging in...' : 'Log In'}
           </button>
         </div>
         
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account? <button onClick={()=>navigate("/signup")} className="text-blue-500 hover:text-blue-600 font-medium hover:underline">Sign up</button>
+          Don’t have an account?{' '}
+          <button onClick={() => navigate('/signup')} className="text-blue-500 hover:text-blue-600 font-medium hover:underline" disabled={isLoading}>
+            Sign up
+          </button>
         </p>
       </div>
     </div>
