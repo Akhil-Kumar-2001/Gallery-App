@@ -1,8 +1,12 @@
-import User, { IUser } from "../../model/user.model";
+import User, { IUser } from "../../../model/user.model";
+import { BaseRepository } from "../../base/implementation/BaseRepository";
 import IUserRepository from "../IUserRepository";
 
-class UserRepository implements IUserRepository {
+class UserRepository extends BaseRepository<IUser> implements IUserRepository {
 
+    constructor() {
+        super(User)
+    }
     /**
      * Finds a user by email.
      * @param email - The email of the user to find.

@@ -1,6 +1,7 @@
-import { IUser } from "../model/user.model";
+import { IUser } from "../../model/user.model";
+import { IBaseRepository } from "../base/IBaseRepository";
 
-interface IUserRepository {
+interface IUserRepository extends IBaseRepository<IUser> {
     findByEmail(email: string): Promise<IUser | null>;
     findByPhoneNumber(phoneNumber: number): Promise<IUser | null>;
     createUser(data: IUser): Promise<IUser | null>;

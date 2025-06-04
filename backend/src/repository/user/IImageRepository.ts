@@ -1,7 +1,8 @@
-import { IImage } from "../model/image.model";
-import { ImageOrderPayload } from "../types/basicTypes";
+import { IImage } from "../../model/image.model";
+import { ImageOrderPayload } from "../../types/basicTypes";
+import { IBaseRepository } from "../base/IBaseRepository";
 
-interface IImageRepository {
+interface IImageRepository extends IBaseRepository<IImage> {
     uploadImage(userId: string, title: string, imagePath: string): Promise<IImage | null>
     getImages(userId: string): Promise<IImage[] | null>
     updateOrder(userId: string, imageOrder: ImageOrderPayload): Promise<boolean | null>

@@ -1,5 +1,5 @@
 import { IUser } from "../../model/user.model";
-import IUserRepository from "../../repository/IUserRepository";
+import IUserRepository from "../../repository/user/IUserRepository";
 import IUserService from "../IUserService";
 
 class UserService implements IUserService {
@@ -31,7 +31,7 @@ class UserService implements IUserService {
 
     async createUser(data: IUser): Promise<IUser | null> {
         try {
-            const user = await this._userRepository.createUser(data);
+            const user = await this._userRepository.create(data);
             return user;
         } catch (error) {
             console.error("Error creating user:", error);

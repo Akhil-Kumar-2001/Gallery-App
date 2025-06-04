@@ -1,10 +1,14 @@
 import IImageRepository from "../IImageRepository";
-import { IImage, Image } from '../../model/image.model'; // Adjust the path to your Image model
+import { IImage, Image } from '../../../model/image.model'; // Adjust the path to your Image model
 import { Types } from 'mongoose';
-import { ImageOrderPayload } from "../../types/basicTypes";
+import { ImageOrderPayload } from "../../../types/basicTypes";
+import { BaseRepository } from "../../base/implementation/BaseRepository";
 
-class ImageRepository implements IImageRepository {
+class ImageRepository extends BaseRepository<IImage> implements IImageRepository {
 
+    constructor() {
+        super(Image)
+    }
     async uploadImage(userId: string, title: string, imagePath: string): Promise<IImage | null> {
         try {
             const lastImage = await Image.findOne({ userId: new Types.ObjectId(userId) })
@@ -68,9 +72,9 @@ class ImageRepository implements IImageRepository {
     }
 
 
-    async deleteImage(id: string): Promise<boolean | null> {
+    async deleteImage(imageId: string): Promise<boolean | null> {
         try {
-            const deleteImage = await Image.findByIdAndDelete({ _id: id });
+            const deleteImage = await Image.findByIdAndDelete({ _id: imageId });
             return deleteImage ? true : null;
         } catch (error) {
             console.error("Failed to delete image:", error);
@@ -79,28 +83,28 @@ class ImageRepository implements IImageRepository {
     }
 
 
-async editImage(title: string, imagePath: string, id: string): Promise<IImage | null> {
-    try {
-        const updateFields: Partial<{ title: string; imagePath: string }> = {
-            title
-        };
+    async editImage(title: string, imagePath: string, imageId: string): Promise<IImage | null> {
+        try {
+            const updateFields: Partial<{ title: string; imagePath: string }> = {
+                title
+            };
 
-        if (imagePath && imagePath.trim() !== "") {
-            updateFields.imagePath = imagePath;
+            if (imagePath && imagePath.trim() !== "") {
+                updateFields.imagePath = imagePath;
+            }
+
+            const updatedImage = await Image.findByIdAndUpdate(
+                imageId,
+                { $set: updateFields },
+                { new: true } // to return the updated document if needed
+            );
+
+            return updatedImage ?? null;
+        } catch (error) {
+            console.error("Failed to update image:", error);
+            return null;
         }
-
-        const updatedImage = await Image.findByIdAndUpdate(
-            id,
-            { $set: updateFields },
-            { new: true } // to return the updated document if needed
-        );
-
-        return updatedImage ?? null;
-    } catch (error) {
-        console.error("Failed to update image:", error);
-        return null;
     }
-}
 
 }
 

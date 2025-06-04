@@ -20,7 +20,6 @@ class UserController implements IUserController {
     async signup(req: Request, res: Response): Promise<void> {
         try {
             const { username, email, phoneNumber } = req.body;
-            console.log(phoneNumber)
             let { password } = req.body;
             if (!username || !email || !phoneNumber || !password) {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "All fields are required" });
@@ -106,7 +105,6 @@ class UserController implements IUserController {
                 return;
             }
             const userCacheCode = userExists?.cacheCode;
-            console.log("user chache code", userCacheCode)
             const userCacheCodeExpires = userExists?.cacheCodeExpires;
             if (userCacheCode !== cacheCode || !userCacheCodeExpires || userCacheCodeExpires < new Date()) {
                 res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, message: "Invalid or expired verification code" });

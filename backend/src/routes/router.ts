@@ -1,11 +1,11 @@
 import Router from 'express';
-import UserRepository from '../repository/implementation/UserRepository';
+import UserRepository from '../repository/user/implementation/UserRepository';
 import UserService from '../service/implementation/UserService';
 import UserController from '../controller/implementation/UserController';
 import IUserController from '../controller/IUserControler';
 import { validateToken } from '../middleware/validateToken';
 import { upload } from '../middleware/multer';
-import ImageRepository from '../repository/implementation/ImageRepository';
+import ImageRepository from '../repository/user/implementation/ImageRepository';
 import ImageService from '../service/implementation/ImageService';
 import ImageController from '../controller/implementation/ImageController';
 import IImageController from '../controller/IImageControler';

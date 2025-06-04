@@ -13,8 +13,6 @@ class ImageController implements IImageController {
     async uploadImage(req: Request, res: Response): Promise<void> {
         console.log("User ID from request:");
         try {
-            console.log("Request body:", req.file);
-            console.log(req.files as Express.Multer.File[]);
             const files = req.files as Express.Multer.File[];
             if (!files || files.length === 0) {
                 res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "No files uploaded" });
@@ -49,7 +47,6 @@ class ImageController implements IImageController {
         try {
             const userId = req.userId as string;
             const imageOrder = req.body
-            console.log(imageOrder)
             const response = await this._imageService.updateOrder(userId, imageOrder)
             if (response) {
                 res.status(STATUS_CODES.OK).json({ success: true, message: "Image Order changed successfull" })
@@ -62,10 +59,10 @@ class ImageController implements IImageController {
 
     async deleteImage(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const response = await this._imageService.deleteImage(id);
+            const { id: imageId } = req.params;
+            const response = await this._imageService.deleteImage(imageId);
             if (response) {
-                res.status(STATUS_CODES.OK).json({ success: true, message: "Image Shuffled changed successfull" })
+                res.status(STATUS_CODES.OK).json({ success: true, message: "Image deleted successfull" })
             }
         } catch (error) {
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error while deleting the image" })
@@ -86,7 +83,6 @@ class ImageController implements IImageController {
                 res.status(STATUS_CODES.CREATED).json({ success: true, message: "Image uploaded successfully", data: upload });
             }
         } catch (error) {
-            console.log("what is the error", error)
             res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: "Error while editing the image" })
         }
     }
