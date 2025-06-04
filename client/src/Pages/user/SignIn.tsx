@@ -1,4 +1,4 @@
-import React, { useState, type FormEvent, type ChangeEvent } from 'react';
+import React, { useState, useEffect, type FormEvent, type ChangeEvent } from 'react';
 import { SignIn } from '../../Service/userApi';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -22,8 +22,21 @@ const Login: React.FC = () => {
     password: ''
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Added loading state
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFormValid, setIsFormValid] = useState<boolean>(false); // Added state for form validity
   const navigate = useNavigate();
+
+  // Validate form in real-time to enable/disable login button
+  useEffect(() => {
+    const validateFormForButton = (): boolean => {
+      if (!formData.email.trim()) return false;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return false;
+      if (!formData.password) return false;
+      if (formData.password.length < 8) return false;
+      return true;
+    };
+    setIsFormValid(validateFormForButton());
+  }, [formData]);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -48,7 +61,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      setIsLoading(true); // Set loading to true when starting the API call
+      setIsLoading(true);
       try {
         const response = await SignIn({
           email: formData.email,
@@ -69,7 +82,7 @@ const Login: React.FC = () => {
       } catch (error) {
         setErrors({ api: 'An error occurred. Please try again.' });
       } finally {
-        setIsLoading(false); // Reset loading state after response
+        setIsLoading(false);
       }
     }
   };
@@ -111,7 +124,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                 placeholder="Enter your email"
-                disabled={isLoading} // Disable input during loading
+                disabled={isLoading}
               />
             </div>
             {errors.email && (
@@ -138,7 +151,7 @@ const Login: React.FC = () => {
                 onChange={handleChange}
                 className="w-full pl-10 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                 placeholder="Enter your password"
-                disabled={isLoading} // Disable input during loading
+                disabled={isLoading}
               />
             </div>
             {errors.password && (
@@ -158,8 +171,10 @@ const Login: React.FC = () => {
           
           <button
             onClick={handleSubmit}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
-            disabled={isLoading} // Disable button during loading
+            className={`w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center ${
+              !isFormValid || isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-600 hover:to-purple-700'
+            }`}
+            disabled={!isFormValid || isLoading} // Disable button if form is invalid or loading
           >
             {isLoading ? (
               <svg className="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24">
