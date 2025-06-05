@@ -95,7 +95,7 @@ const Signup: React.FC = () => {
                         password: '',
                         confirmPassword: ''
                     });
-                    navigate('/');
+                    navigate(`/verify-cache/${formData.email}`);
                 } else {
                     const errorData = await response.json();
                     const newErrors: FormErrors = {};

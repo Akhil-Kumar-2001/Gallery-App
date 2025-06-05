@@ -26,6 +26,7 @@ const imageController:IImageController = new ImageController(imageService)
 // signup and signin routes
 
 router.post('/signup', userController.signup.bind(userController));
+router.post('/verify-cache',userController.verifyCache.bind(userController))
 router.post('/forgot-password', userController.forgotPassword.bind(userController));
 router.post('/reset-password', userController.resetPassword.bind(userController));
 router.post('/signin', userController.signin.bind(userController));

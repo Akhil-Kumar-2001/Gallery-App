@@ -8,7 +8,7 @@ import Header from './components/Header'
 import ErrorBoundary from './components/ErrorBoundary'
 import ForgotPassword from './Pages/user/ForgotPassword'
 import ResetPassword from './Pages/user/ResetPassword'
-// import ResetPassword from './Pages/user/ResetPassword'
+import Verification from './Pages/user/VerifyOtp'
 
 
 const Layout = () => {
@@ -36,6 +36,7 @@ const App = () => {
           } />
         </Route >
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-cache/:email" element={<Verification />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:email" element={<ResetPassword />} />

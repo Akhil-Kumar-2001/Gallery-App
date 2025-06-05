@@ -26,31 +26,31 @@ export const Signup = async (userData: IUser) => {
     }
 }
 
-// export const SignIn = async (userData: IUser) => {
-//     try {
-//         const response = await axios.post(`${API_URI}/signin`, { ...userData }, { withCredentials: true })
-//         console.log("response from signin", response.data)
-//         const accessToken = response.data.data.accessToken
-//         if (accessToken) {
-//             localStorage.setItem('accessToken', accessToken)
-//             useAuthStore.getState().setAuth(true)  // Zustand store update
-//         }
-//         return response.data
 
-//     } catch (error: unknown) {
-//         handleAxiosError(error)
-//     }
-// }
+export const VerifyCode = async (email: string, cacheCode: string) => {
+    try {
+        const response = await axios.post(`${API_URI}/verify-cache`, { email, cacheCode });
+        console.log(response.data)
+        const accessToken = response.data.data.accessToken
+        if (accessToken) {
+            localStorage.setItem('accessToken', accessToken)
+            useAuthStore.getState().setAuth(true, email)  // Pass email to store
+        }
+        return response.data;
+    } catch (error) {
+        handleAxiosError(error)
+    }
+}
 
 
 export const SignIn = async (userData: IUser) => {
     try {
         const response = await axios.post(`${API_URI}/signin`, { ...userData }, { withCredentials: true })
         console.log("response from signin", response.data)
-        
+
         const accessToken = response.data.data.accessToken
         const email = response.data.data.email // Assuming email is in response.data.data.email
-        
+
         if (accessToken) {
             localStorage.setItem('accessToken', accessToken)
             useAuthStore.getState().setAuth(true, email)  // Pass email to store
@@ -63,18 +63,18 @@ export const SignIn = async (userData: IUser) => {
 }
 
 
-export const forgotPassword = async(email:string) => {
+export const forgotPassword = async (email: string) => {
     try {
-        const response = await axios.post(`${API_URI}/forgot-password`,{email});
+        const response = await axios.post(`${API_URI}/forgot-password`, { email });
         return response.data
     } catch (error) {
         handleAxiosError(error)
     }
 }
 
-export const resetPassword = async(cacheCode:string,password:string,email:string) => {
+export const resetPassword = async (cacheCode: string, password: string, email: string) => {
     try {
-        const response = await axios.post(`${API_URI}/reset-password`,{cacheCode,password,email});
+        const response = await axios.post(`${API_URI}/reset-password`, { cacheCode, password, email });
         return response.data
     } catch (error) {
         handleAxiosError(error)
@@ -128,9 +128,11 @@ export const updateImage = async (id: string, formData: FormData) => {
         console.log(formData.get('image'))
         console.log(formData.get('title'));
         // console.log(id, formData)
-        const response = await apiClient.post(`/update-image/${id}`,  formData )
+        const response = await apiClient.post(`/update-image/${id}`, formData)
         return response.data
     } catch (error) {
         handleAxiosError(error)
     }
 }
+
+
