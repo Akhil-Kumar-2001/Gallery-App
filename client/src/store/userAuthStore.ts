@@ -1,24 +1,7 @@
-// import { create } from 'zustand'
-
-// interface AuthState {
-//   isAuthenticated: boolean
-//   setAuth: (auth: boolean) => void
-//   logout: () => void
-// }
-
-// export const useAuthStore = create<AuthState>((set) => ({
-//   isAuthenticated: !!localStorage.getItem('accessToken'),
-//   setAuth: (auth) => set({ isAuthenticated: auth }),
-//   logout: () => {
-//     localStorage.removeItem('accessToken')
-//     set({ isAuthenticated: false })
-//   },
-// }))
-
-
-
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { apiClient } from '../Service/userAxiosInstance'
 
 interface AuthState {
   isAuthenticated: boolean
@@ -27,20 +10,32 @@ interface AuthState {
   logout: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: !!localStorage.getItem('accessToken'),
-  email: localStorage.getItem('userEmail'),
-  setAuth: (auth, email) => {
-    const updates: Partial<AuthState> = { isAuthenticated: auth }
-    if (email) {
-      updates.email = email
-      localStorage.setItem('userEmail', email)
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      isAuthenticated: !!localStorage.getItem('accessToken'),
+      email: localStorage.getItem('userEmail'),
+      
+      setAuth: (auth, email) => {
+        console.log("Setting auth state in store")
+        const updates: Partial<AuthState> = { isAuthenticated: auth }
+        if (email) {
+          updates.email = email
+          localStorage.setItem('userEmail', email)
+        }
+        set(updates)
+        console.log(updates)
+      },
+
+      logout: async() => {
+        await apiClient.post('/logout')
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('userEmail')
+        set({ isAuthenticated: false, email: null })
+      },
+    }),
+    {
+      name: 'auth-store', // 🔑 This is the key used in localStorage
     }
-    set(updates)
-  },
-  logout: () => {
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('userEmail')
-    set({ isAuthenticated: false, email: null })
-  },
-}))
+  )
+)
