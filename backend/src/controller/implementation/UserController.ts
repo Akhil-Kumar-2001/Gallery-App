@@ -110,12 +110,16 @@ class UserController implements IUserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
+                domain: '.elevio-client-gbxi.vercel.app',
+                path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
             res.cookie("accessToken", accessToken, {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
+                domain: '.elevio-client-gbxi.vercel.app',
+                path: '/',
                 maxAge: 15 * 60 * 1000,
             });
             console.log("access token", accessToken)
@@ -235,7 +239,7 @@ class UserController implements IUserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: 'https://elevio-client-gbxi.vercel.app',
+                domain: '.elevio-client-gbxi.vercel.app',
                 path: '/',
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
@@ -243,7 +247,7 @@ class UserController implements IUserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: 'https://elevio-client-gbxi.vercel.app',
+                domain: '.elevio-client-gbxi.vercel.app',
                 path: '/',
                 maxAge: 15 * 60 * 1000,
             });
@@ -287,7 +291,7 @@ class UserController implements IUserController {
                     httpOnly: true,
                     secure: true,
                     sameSite: "none",
-                    domain: 'https://elevio-client-gbxi.vercel.app',
+                    domain: '.elevio-client-gbxi.vercel.app',
                     path: '/',
                     maxAge: 15 * 60 * 1000,
                 });
@@ -307,14 +311,14 @@ class UserController implements IUserController {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: 'https://elevio-client-gbxi.vercel.app',
+                domain: '.elevio-client-gbxi.vercel.app',
                 path: '/'
             });
             res.clearCookie("refreshToken", {
                 httpOnly: true,
                 secure: true,
                 sameSite: "none",
-                domain: 'https://elevio-client-gbxi.vercel.app',
+                domain: '.elevio-client-gbxi.vercel.app',
                 path: '/'
             });
             res.status(STATUS_CODES.OK).json({
