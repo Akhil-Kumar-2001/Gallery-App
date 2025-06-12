@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuthStore } from '../store/userAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
@@ -8,6 +9,7 @@ const Header: React.FC = () => {
     const handleLogout = () => {
         useAuthStore.getState().logout()
         navigate('/signin') // redirect
+        toast.success("logout successfull !!")
     };
 
     return (
