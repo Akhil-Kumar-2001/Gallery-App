@@ -295,5 +295,30 @@ class UserController implements IUserController {
     };
 
 
+    async logout(req: Request, res: Response): Promise<void> {
+        try {
+            res.clearCookie("accessToken", {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            });
+            res.clearCookie("refreshToken", {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none",
+            });
+            res.status(STATUS_CODES.OK).json({
+                success: true,
+                message: "Logout successful",
+            });
+            return
+        } catch (error) {
+            console.error("Logout error:", error);
+            res.status(STATUS_CODES.BAD_REQUEST).json({ error: "logout failed" });
+            return
+        }
+    }
+
+
 }
 export default UserController;

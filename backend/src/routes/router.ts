@@ -32,6 +32,8 @@ router.post('/reset-password', userController.resetPassword.bind(userController)
 router.post('/signin', userController.signin.bind(userController));
 router.post('/refresh-token',userController.refreshToken.bind(userController))
 
+router.post('/logout',userController.logout.bind(userController));
+
 // images and image upload route
 router.post('/upload',validateToken(), upload.array("image"),imageController.uploadImage.bind(imageController))
 router.get('/images',validateToken(),imageController.getImages.bind(imageController))
