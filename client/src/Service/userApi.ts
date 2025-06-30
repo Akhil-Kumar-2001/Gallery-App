@@ -96,11 +96,6 @@ export const resetPassword = async (cacheCode: string, password: string, email: 
 
 export const uploadImage = async (formData: FormData) => {
     try {
-        console.log('FormData entries:');
-        for (const [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
         const response = await apiClient.post('/upload', formData);
         
         return response.data;

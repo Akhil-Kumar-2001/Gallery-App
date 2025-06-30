@@ -251,15 +251,9 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
   const titles = images.map(img => img.title);
   formData.append('titles', JSON.stringify(titles));
 
-  console.log('FormData contents before sending:');
-  for (const [key, value] of formData.entries()) {
-    console.log(`${key}:`, value);
-  }
-
   setIsLoading(true);
   try {
     const response = await uploadImage(formData);
-    console.log("response data in modal", response);
 
     if (response && response.success) {
       const uploadedImages: IImage[] = response.data;
