@@ -10,25 +10,87 @@ class ImageController implements IImageController {
         this._imageService = imageService;
     }
 
+    // async uploadImage(req: Request, res: Response): Promise<void> {
+    //     console.log("User ID from request:");
+    //     try {
+    //         const files = req.files as Express.Multer.File[];
+    //         console.log(files)
+    //         if (!files || files.length === 0) {
+    //             res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "No files uploaded" });
+    //             return;
+    //         }
+    //         const buffer = files[0].buffer;
+    //         const userId = req.userId as string;
+    //         const upload = await this._imageService.uploadImage(buffer, req.body.title, userId);
+    //         if (upload) {
+    //             res.status(STATUS_CODES.CREATED).json({ success: true, message: "Image uploaded successfully", data: upload });
+    //         }
+    //     } catch (error) {
+    //         console.error("Error in uploadImage:", error);
+    //         res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
+    //     }
+    // }
+
     async uploadImage(req: Request, res: Response): Promise<void> {
-        console.log("User ID from request:");
-        try {
-            const files = req.files as Express.Multer.File[];
-            if (!files || files.length === 0) {
-                res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "No files uploaded" });
-                return;
-            }
-            const buffer = files[0].buffer;
-            const userId = req.userId as string;
-            const upload = await this._imageService.uploadImage(buffer, req.body.title, userId);
-            if (upload) {
-                res.status(STATUS_CODES.CREATED).json({ success: true, message: "Image uploaded successfully", data: upload });
-            }
-        } catch (error) {
-            console.error("Error in uploadImage:", error);
-            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
+    console.log("User ID from request:");
+
+    try {
+        const files = (req.files as { [fieldname: string]: Express.Multer.File[] })?.image;
+        console.log("Uploaded files:", files);
+
+        if (!files || files.length === 0) {
+            res.status(STATUS_CODES.BAD_REQUEST).json({ 
+                success: false, 
+                message: "No files uploaded" 
+            });
+            return;
         }
+
+        const userId = req.userId as string;
+        let titles: string[] = [];
+        if (req.body.titles) {
+            try {
+                titles = JSON.parse(req.body.titles);
+            } catch {
+                titles = Array.isArray(req.body.titles) ? req.body.titles : [req.body.titles];
+            }
+        }
+
+        while (titles.length < files.length) {
+            titles.push(`Image ${titles.length + 1}`);
+        }
+
+        // Upload each image
+        const uploadPromises = files.map(async (file, index) => {
+            const buffer = file.buffer;
+            const title = titles[index] || `Image ${index + 1}`;
+            return await this._imageService.uploadImage(buffer, title, userId);
+        });
+
+        const uploads = await Promise.all(uploadPromises);
+        const successfulUploads = uploads.filter(upload => upload !== null);
+
+        if (successfulUploads.length > 0) {
+            res.status(STATUS_CODES.CREATED).json({ 
+                success: true, 
+                message: `${successfulUploads.length} image(s) uploaded successfully`, 
+                data: successfulUploads 
+            });
+        } else {
+            res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
+                success: false, 
+                message: "Failed to upload images" 
+            });
+        }
+    } catch (error) {
+        console.error("Error in uploadImage:", error);
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
+}
+
 
     async getImages(req: Request, res: Response): Promise<void> {
         try {

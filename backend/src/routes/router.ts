@@ -35,7 +35,15 @@ router.post('/refresh-token',userController.refreshToken.bind(userController))
 router.post('/logout',userController.logout.bind(userController));
 
 // images and image upload route
-router.post('/upload',validateToken(), upload.array("image"),imageController.uploadImage.bind(imageController))
+// router.post('/upload',validateToken(), upload.array("image"),imageController.uploadImage.bind(imageController))
+router.post('/upload', 
+  validateToken(), 
+  upload.fields([
+    { name: 'image', maxCount: 10 },
+    { name: 'images', maxCount: 10 }
+  ]), 
+  imageController.uploadImage.bind(imageController)
+)
 router.get('/images',validateToken(),imageController.getImages.bind(imageController))
 router.post('/change-order',validateToken(),imageController.updateOrder.bind(imageController))
 
