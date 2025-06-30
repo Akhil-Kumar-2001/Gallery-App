@@ -9,7 +9,7 @@ const API_URI = import.meta.env.VITE_API_URI;
 const apiClient = axios.create({
   baseURL: API_URI,
   withCredentials: true,
-  timeout: 10000,
+  // timeout: 10000,
 });
 
 interface RefreshResponse {

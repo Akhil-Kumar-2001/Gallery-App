@@ -82,17 +82,34 @@ export const resetPassword = async (cacheCode: string, password: string, email: 
 }
 
 
+// export const uploadImage = async (formData: FormData) => {
+//     try {
+//         console.log(formData.get('image'))
+//         console.log(formData.get('title'));
+//         const response = await apiClient.post('/upload', formData);
+//         return response.data;
+//     } catch (error) {
+//         handleAxiosError(error)
+//     }
+// }
+
+
 export const uploadImage = async (formData: FormData) => {
     try {
-        console.log(formData.get('image'))
-        console.log(formData.get('title'));
+        console.log('FormData entries:');
+        for (const [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
         const response = await apiClient.post('/upload', formData);
+        
         return response.data;
     } catch (error) {
-        handleAxiosError(error)
+        console.error('Upload API Error:', error);
+        handleAxiosError(error);
+        throw error; 
     }
 }
-
 
 export const getImages = async () => {
     try {
